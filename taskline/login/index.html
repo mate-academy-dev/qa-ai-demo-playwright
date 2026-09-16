@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Log in &middot; Taskline</title>
+<!-- Навчальний стенд курсу «AI-інструменти для QA», модуль M4. Варіант A: поле email підписане «Email». Підпис не міняти без узгодження з автором курсу: на ньому стоїть порівняння у відео M4T2-video-1 і M4T2-video-3. -->
+<style>
+:root{--bg:#f5f6f8;--card:#fff;--ink:#14161a;--muted:#5b6472;--line:#dfe3e9;--brand:#2f5bd7;--danger:#b3261e;--warn:#8a5a00}
+*{box-sizing:border-box}
+body{margin:0;font:15px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--ink);background:var(--bg)}
+.wrap{max-width:420px;margin:0 auto;padding:56px 20px}
+.wide{max-width:760px}
+.brand{font-size:20px;font-weight:700;letter-spacing:-.01em;margin:0 0 24px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:28px}
+h1{font-size:24px;line-height:1.25;margin:0 0 16px;letter-spacing:-.01em}
+label{display:block;font-size:13px;font-weight:600;margin:0 0 6px}
+input[type=email],input[type=password]{width:100%;padding:10px 12px;font:inherit;border:1px solid var(--line);border-radius:7px;background:#fff}
+input:focus{outline:2px solid var(--brand);outline-offset:1px;border-color:var(--brand)}
+.field{margin:0 0 16px}
+button{width:100%;padding:11px 16px;font:inherit;font-weight:600;color:#fff;background:var(--brand);border:0;border-radius:7px;cursor:pointer}
+button:hover{background:#2649ad}
+.error{margin:0 0 18px;padding:10px 12px;border:1px solid #f0c8c5;background:#fdeceb;color:var(--danger);border-radius:7px;font-size:14px}
+.muted{color:var(--muted);font-size:13px}
+.env{background:#fff8e1;border-bottom:1px solid #f0e0b0;color:var(--warn);font-size:12px;padding:6px 12px;text-align:center}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:0 0 10px}
+.pill{display:inline-block;padding:3px 10px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid var(--line);background:#eef1f6}
+.pill-delay{background:#fdeceb;border-color:#f0c8c5;color:var(--danger)}
+table{border-collapse:collapse;width:100%;margin:16px 0 0;font-size:14px}
+th,td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--line)}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted)}
+a{color:var(--brand)}
+</style>
+</head>
+<body>
+<div class="env">Training environment. Fictional product, fictional data.</div>
+
+<div id="view-login" class="wrap">
+  <p class="brand">Taskline</p>
+  <div class="card">
+    <h1>Log in to your workspace</h1>
+    <div id="form-error" class="error" role="alert" hidden>Invalid email or password</div>
+    <form id="login-form" novalidate>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" autocomplete="username">
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" name="password" type="password" autocomplete="current-password">
+      </div>
+      <button type="submit">Log in</button>
+    </form>
+  </div>
+  <p class="muted" style="margin-top:16px">Trouble signing in? Ask your workspace owner.</p>
+</div>
+
+<div id="view-dashboard" class="wrap wide" hidden>
+  <p class="brand">Taskline</p>
+  <div class="card">
+    <h1>Dashboard</h1>
+    <p class="muted">Signed in as qa.tester@example.com &middot; Owner</p>
+    <table>
+      <thead><tr><th>Project</th><th>Status</th><th>Owner</th></tr></thead>
+      <tbody>
+        <tr><td>Website redesign</td><td>In progress</td><td>Olena K.</td></tr>
+        <tr><td>Mobile release 4.2</td><td>Blocked</td><td>Dmytro S.</td></tr>
+        <tr><td>Billing migration</td><td>Planned</td><td>Iryna P.</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+(function () {
+  var CREDS = { email: 'qa.tester@example.com', password: 'Str0ng!Pass99' };
+  function basePath() { return location.pathname.replace(/\/(login|dashboard)\/?$/, ''); }
+  function onDashboard() { return /\/dashboard\/?$/.test(location.pathname); }
+  function render() {
+    var d = onDashboard();
+    document.getElementById('view-login').hidden = d;
+    document.getElementById('view-dashboard').hidden = !d;
+    document.title = (d ? 'Dashboard' : 'Log in') + ' \u00b7 Taskline';
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    render();
+    window.addEventListener('popstate', render);
+    document.getElementById('login-form').addEventListener('submit', function (e) {
+      e.preventDefault();
+      var email = document.getElementById('email').value.trim().toLowerCase();
+      var password = document.getElementById('password').value;
+      var err = document.getElementById('form-error');
+      if (email === CREDS.email && password === CREDS.password) {
+        err.hidden = true;
+        history.pushState({}, '', basePath() + '/dashboard');
+        render();
+      } else { err.hidden = false; }
+    });
+  });
+})();
+</script>
+</body>
+</html>
